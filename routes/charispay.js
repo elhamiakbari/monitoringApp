@@ -17,6 +17,7 @@ const {charispayController} = require("../controller/charispayController");
 router.get("/connection-errors", charispayController);
 router.get("/handled-exceptions", charispayController);
 router.get("/unhandled-exceptions/:from_date/:to_date", charispayController);
+router.get("/companies-daily-transactions", charispayController);
 
 
 module.exports = router;

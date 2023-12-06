@@ -9,11 +9,18 @@ const app = express();
 //   path: '/api/monitoring',
 // });
 
+function errorHandler(err, req, res, next) {
+    res.status(500);
+  
+    console.log(err)
+  
+    res.json({error: err.message});
+  }
+
 app.use('/', indexRouter);
 app.use('/charispay', charispayRouter);
 app.use(express.json());
-
-
+app.use(errorHandler);
 
 app.listen(port);
 

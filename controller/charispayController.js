@@ -4,6 +4,8 @@ const connectionErrorsRequest = require("../ELKRequests/charispayElasticRequests
 const request = require('../service/RequestService');
 const connectionErrorsResponse = require('../response/charispay/connectionErrorResponse');
 const config = require("../config.json");
+const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
+const SqlService= require("../service/SqlService")
 
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
@@ -11,7 +13,16 @@ exports.charispayController = async (req, res) => {
     const toDate = req.query.to_date;
     const searchUrl= config.elastic_base_url + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
     switch (route) {
+      case '/companies-daily-transactions':
+        const query = companyTransactionQuery(config.sql_config.charispay.database);
+         SqlService.query('charispay',query).then(response => {
+          console.log(response);
+          res.send(response);
+        });
+      break;
         
+        res.send(connectionErrorStats);
+        break;
         case '/connection-errors':
           // Logic for handling the "connection-errors" route
           const requestBody = connectionErrorsRequest(fromDate,toDate);
