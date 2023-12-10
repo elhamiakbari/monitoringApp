@@ -61,7 +61,7 @@ class SqlService {
                     request.on('row', (columns) => {
                         console.log('colu ',columns);
                         const test = columns.reduce((prevalue, currentValue)=>{
-                            return {...prevalue, ...{[currentValue.metadata.colName]: currentValue.value}}
+                            return {...prevalue, ...{[convertToPascalCase(currentValue.metadata.colName)]: currentValue.value}}
                         },{})
                         responseArray.push(test)                        
                     })
