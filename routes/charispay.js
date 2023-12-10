@@ -15,6 +15,8 @@ const {charispayController} = require("../controller/charispayController");
 // });
 
 router.get("/connection-errors", charispayController);
+router.get("/last-hour-connection-errors", charispayController);
+router.get("/today-connection-errors", charispayController);
 router.get("/handled-exceptions", charispayController);
 router.get("/unhandled-exceptions/:from_date/:to_date", charispayController);
 router.get("/companies-daily-transactions", charispayController);
