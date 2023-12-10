@@ -55,12 +55,6 @@ class SqlService {
                             console.log(err)
                             reject(err)
                         } 
-                        // else {
-
-
-                        //     return response;
-                        // }
-                        // connection.close()
                     })
 
                     let responseArray = new Array();
@@ -72,7 +66,6 @@ class SqlService {
                         responseArray.push(test)                        
                     })
                     request.on('done', function(rowCount, more) {  
-                        console.log(rowCount + ' rows returned');  
                         });  
                         
                         // Close the connection after the final event emitted by the request, after the callback passes
