@@ -20,8 +20,7 @@ exports.charispayController = async (req, res) => {
       case '/companies-daily-transactions':
         const query = companyTransactionQuery(config.sql_config.charispay.database);
          SqlService.query('charispay',query).then(response => {
-          console.log(response);
-          res.send(response);
+          res.send((response));
         });
       break;
 
