@@ -6,7 +6,7 @@ const connectionErrorsResponse = require('../response/charispay/connectionErrorR
 const config = require("../config.json");
 const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
 const SqlService= require("../service/SqlService");
-const connectionErrorResponse = require("../response/charispay/connectionErrorResponse");
+const connectionErrorResponse = require('../response/charispay/connectionErrorResponse');
 
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
