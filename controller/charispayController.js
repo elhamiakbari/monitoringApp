@@ -1,22 +1,19 @@
 const express = require("express");
 const app = require("../app");
 const connectionErrorsRequest = require("../ELKRequests/charispayElasticRequests/connectionErrorsRequest");
-const lastHourConnectionErrorsRequest= require("../ELKRequests/charispayElasticRequests/lastHourConnectionErrorsRequest");
-const todayConnectionErrorsRequest= require("../ELKRequests/charispayElasticRequests/todayConnectionErrorsRequest");
 const request = require('../service/RequestService');
 const connectionErrorsResponse = require('../response/charispay/connectionErrorResponse');
-const lastHourConnectionErrorsResponse = require('../response/charispay/lastHourConnectionErrorsResponse');
-const todayConnectionErrorsResponse = require('../response/charispay/todayConnectionErrorsResponse');
 const config = require("../config.json");
 const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
-const SqlService= require("../service/SqlService")
+const SqlService= require("../service/SqlService");
+const connectionErrorResponse = require('../response/charispay/connectionErrorResponse');
 
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
-    const fromDate = req.query.from_date;
-    const toDate = req.query.to_date;
-    const searchUrl= config.elastic_base_url + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
-    switch (route) {
+    var fromDate = new Date();
+    var toDate = new Date();
+    const searchUrl= config.elastic_base_url +config.elastic_index_name.charispay + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
+    switch (route) { 
       case '/companies-daily-transactions':
         const query = companyTransactionQuery(config.sql_config.charispay.database);
          SqlService.query('charispay',query).then(response => {
@@ -25,7 +22,8 @@ exports.charispayController = async (req, res) => {
       break;
 
       case '/connection-errors':
-          // Logic for handling the "connection-errors" route
+         fromDate = req.query.from_date;
+         toDate = req.query.to_date;
           const requestBody = connectionErrorsRequest(fromDate,toDate);
           const serviceResponse = await request.post(searchUrl,requestBody.requestBody);
           let responseData= serviceResponse.aggregations[0].buckets
@@ -39,11 +37,12 @@ exports.charispayController = async (req, res) => {
 
         
       case '/last-hour-connection-errors':
-           
-            const RequestBody = lastHourConnectionErrorsRequest(fromDate,toDate);
-            const serviceResponseLastHour = await request.post(searchUrl,RequestBody.RequestBody);
+             toDate = new Date();
+             fromDate = new Date(toDate.getTime() - 3600000);
+             const RequestBody = connectionErrorsRequest(fromDate,toDate);
+            const serviceResponseLastHour = await request.post(searchUrl,RequestBody.requestBody);
             let responsedata= serviceResponseLastHour.aggregations[0].buckets;
-            let connectionErrorsLastHourStats= lastHourConnectionErrorsResponse;
+            let connectionErrorsLastHourStats= connectionErrorResponse;
             for(let i = 0; i<responsedata.length; i++){
              connectionErrorsLastHourStats[responsedata[i].key]= responsedata[i].doc_count;
           }
@@ -51,11 +50,13 @@ exports.charispayController = async (req, res) => {
       break;
 
        case '/today-connection-errors':
-           
-       const requestbody = todayConnectionErrorsRequest(fromDate,toDate);
-            const serviceResponseToday= await request.post(searchUrl,requestbody.requestbody);
+             toDate = new Date();
+             fromDate = new Date();
+             fromDate.setHours(0,0,0);
+            const RequestBody2 =  connectionErrorsRequest(fromDate,toDate);
+            const serviceResponseToday= await request.post(searchUrl,RequestBody2.requestBody);
             let ResponseData= serviceResponseToday.aggregations[0].buckets;
-            let connectionErrorsTodayStats= todayConnectionErrorsResponse;
+            let connectionErrorsTodayStats= connectionErrorResponse;
             for(let i = 0; i<ResponseData.length; i++){
              connectionErrorsTodayStats[ResponseData[i].key]= ResponseData[i].doc_count
           }
