@@ -12,7 +12,7 @@ exports.charispayController = async (req, res) => {
     const route = req.route.path;
     var fromDate = new Date();
     var toDate = new Date();
-    const searchUrl= config.elastic_base_url + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
+    const searchUrl= config.elastic_base_url +config.elastic_index_name.charispay + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
     switch (route) { 
       case '/companies-daily-transactions':
         const query = companyTransactionQuery(config.sql_config.charispay.database);
