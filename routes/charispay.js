@@ -20,6 +20,7 @@ router.get("/today-connection-errors", charispayController);
 router.get("/handled-exceptions", charispayController);
 router.get("/unhandled-exceptions/:from_date/:to_date", charispayController);
 router.get("/companies-daily-transactions", charispayController);
+router.get("/transactions-status", charispayController);
 
 
 module.exports = router;

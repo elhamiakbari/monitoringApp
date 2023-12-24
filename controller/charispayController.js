@@ -7,6 +7,7 @@ const config = require("../config.json");
 const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
 const SqlService= require("../service/SqlService");
 const connectionErrorResponse = require('../response/charispay/connectionErrorResponse');
+const transactionsStatus = require("../SqlQueries/charispayQueries/transactionsStatus");
 
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
@@ -20,6 +21,23 @@ exports.charispayController = async (req, res) => {
           res.send((response));
         });
       break;
+
+      case '/transactions-status':
+        const date = [0,-1,-2,-3];
+        const test = [];
+
+        for (let i=0; i < date.length; i++) {
+          const Query = transactionsStatus(config.sql_config.charispay.database,date[i]);
+          let result = await SqlService.query('charispay',Query);
+          test.push(result);
+          console.log(result);
+          // test.push(data);
+        };
+        
+        console.log(test);
+          res.send((test));
+        
+        break;
 
       case '/connection-errors':
          fromDate = req.query.from_date;
@@ -62,6 +80,8 @@ exports.charispayController = async (req, res) => {
           }
             res.send(connectionErrorsTodayStats);
       break;
+
+    
 
       case '/handled-exceptions':
 
