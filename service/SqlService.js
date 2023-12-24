@@ -15,6 +15,7 @@ class SqlService {
                     database: globalConfig.sql_config[dbName].database,
                     encrypt: true,
                     trustServerCertificate: true,
+					port: globalConfig.sql_config[dbName].port,
                 },
                 authentication: {
                     type: 'default',
@@ -27,7 +28,7 @@ class SqlService {
 
             const connection = new Connection(config);
 
-            connection.on('connect', (err) => {
+            connection.on('connect', (err) => {a
                 if (err) {
                     reject(new Error(`POST request failed: ${err.message}`));
                 }
@@ -59,7 +60,6 @@ class SqlService {
 
                     let responseArray = new Array();
                     request.on('row', (columns) => {
-                        console.log('colu ',columns);
                         const test = columns.reduce((prevalue, currentValue)=>{
                             return {...prevalue, ...{[convertToPascalCase(currentValue.metadata.colName)]: currentValue.value}}
                         },{})
