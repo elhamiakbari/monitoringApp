@@ -28,7 +28,7 @@ class SqlService {
 
             const connection = new Connection(config);
 
-            connection.on('connect', (err) => {a
+            connection.on('connect', (err) => {
                 if (err) {
                     reject(new Error(`POST request failed: ${err.message}`));
                 }

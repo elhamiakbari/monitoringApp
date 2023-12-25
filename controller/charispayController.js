@@ -8,6 +8,8 @@ const companyTransactionQuery =require("../SqlQueries/charispayQueries/companies
 const SqlService= require("../service/SqlService");
 const connectionErrorResponse = require('../response/charispay/connectionErrorResponse');
 const transactionsStatus = require("../SqlQueries/charispayQueries/transactionsStatus");
+const errorsInSendToBank = require("../SqlQueries/charispayQueries/errorsInSendToBank");
+const companiesCheques = require("../SqlQueries/charispayQueries/companiesCheques");
 
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
@@ -25,26 +27,38 @@ exports.charispayController = async (req, res) => {
       case '/transactions-status':
         const date = [0,-1,-2,-3];
         const test = [];
-
         for (let i=0; i < date.length; i++) {
           const Query = transactionsStatus(config.sql_config.charispay.database,date[i]);
           let result = await SqlService.query('charispay',Query);
           test.push(result);
           console.log(result);
-          // test.push(data);
-        };
-        
+        };  
         console.log(test);
           res.send((test));
-        
         break;
+
+        case '/errors-in-send-to-bank':
+          let Query = errorsInSendToBank(config.sql_config.charispay.database);
+          SqlService.query('charispay',Query).then(response => {
+            res.send((response));
+          });
+          
+          break;
+
+          case '/companies-cheques':
+            let QUERY = companiesCheques(config.sql_config.charispay.database);
+            SqlService.query('charispay',QUERY).then(response => {
+              res.send((response));
+            });
+            
+            break;
 
       case '/connection-errors':
          fromDate = req.query.from_date;
          toDate = req.query.to_date;
           const requestBody = connectionErrorsRequest(fromDate,toDate);
           const serviceResponse = await request.post(searchUrl,requestBody.requestBody);
-          let responseData= serviceResponse.aggregations[0].buckets
+          let responseData= serviceResponse.aggregations[0].buckets;
           let connectionErrorStats= connectionErrorsResponse;
           for(let i = 0; i<responseData.length; i++){
             connectionErrorStats[responseData[i].key]= responseData[i].doc_count;
@@ -53,7 +67,6 @@ exports.charispayController = async (req, res) => {
           res.send(connectionErrorStats);
       break;
 
-        
       case '/last-hour-connection-errors':
              toDate = new Date();
              fromDate = new Date(toDate.getTime() - 3600000);
