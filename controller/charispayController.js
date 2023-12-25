@@ -53,19 +53,19 @@ exports.charispayController = async (req, res) => {
             
             break;
 
-      case '/connection-errors':
-         fromDate = req.query.from_date;
-         toDate = req.query.to_date;
-          const requestBody = connectionErrorsRequest(fromDate,toDate);
-          const serviceResponse = await request.post(searchUrl,requestBody.requestBody);
-          let responseData= serviceResponse.aggregations[0].buckets;
-          let connectionErrorStats= connectionErrorsResponse;
-          for(let i = 0; i<responseData.length; i++){
-            connectionErrorStats[responseData[i].key]= responseData[i].doc_count;
-          }
+      // case '/connection-errors':
+      //    fromDate = req.query.from_date;
+      //    toDate = req.query.to_date;
+      //     const requestBody = connectionErrorsRequest(fromDate,toDate);
+      //     const serviceResponse = await request.post(searchUrl,requestBody.requestBody);
+      //     let responseData= serviceResponse.aggregations[0].buckets;
+      //     let connectionErrorStats= connectionErrorsResponse;
+      //     for(let i = 0; i<responseData.length; i++){
+      //       connectionErrorStats[responseData[i].key]= responseData[i].doc_count;
+      //     }
           
-          res.send(connectionErrorStats);
-      break;
+      //     res.send(connectionErrorStats);
+      // break;
 
       case '/last-hour-connection-errors':
              toDate = new Date();
