@@ -23,5 +23,8 @@ router.get("/companies-daily-transactions", charispayController);
 router.get("/transactions-status", charispayController);
 router.get("/errors-in-send-to-bank", charispayController);
 router.get("/companies-cheques", charispayController);
+router.get("/error-handled", charispayController);
+router.get("/unhandled-error", charispayController);
+
 
 module.exports = router;

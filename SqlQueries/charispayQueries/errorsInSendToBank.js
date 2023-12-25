@@ -1,3 +1,5 @@
+//  تعداد چک ها و ذیحسابهایی که بیش از یک بار به بانک ارسال شده اند(یعنی خطا خورده بودند)
+
 module.exports=(db) =>{
     const Query= `declare @date nvarchar(30) = CAST( GETDATE() AS Date )
     ;with cte as (

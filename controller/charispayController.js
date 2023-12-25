@@ -1,12 +1,21 @@
 const express = require("express");
 const app = require("../app");
-const connectionErrorsRequest = require("../ELKRequests/charispayElasticRequests/connectionErrorsRequest");
 const request = require('../service/RequestService');
-const connectionErrorsResponse = require('../response/charispay/connectionErrorResponse');
 const config = require("../config.json");
-const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
 const SqlService= require("../service/SqlService");
+const connectionErrorsRequest = require("../ELKRequests/charispayElasticRequests/connectionErrorsRequest");
+const errorHandledRequest = require("../ELKRequests/charispayElasticRequests/errorHandledRequest");
+const unhandledErrorRequest = require("../ELKRequests/charispayElasticRequests/unhandledErrorRequest");
+
+
+const connectionErrorsResponse = require('../response/charispay/connectionErrorResponse');
+
+const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
+
 const connectionErrorResponse = require('../response/charispay/connectionErrorResponse');
+const errorHandledResponse = require('../response/charispay/errorHandledResponse');
+const unhandledErrorResponse = require('../response/charispay/unhandledErrorResponse');
+
 const transactionsStatus = require("../SqlQueries/charispayQueries/transactionsStatus");
 const errorsInSendToBank = require("../SqlQueries/charispayQueries/errorsInSendToBank");
 const companiesCheques = require("../SqlQueries/charispayQueries/companiesCheques");
@@ -93,6 +102,36 @@ exports.charispayController = async (req, res) => {
           }
             res.send(connectionErrorsTodayStats);
       break;
+
+      case '/error-handled':
+        toDate = new Date();
+        fromDate = new Date();
+        fromDate.setHours(0,0,0);
+        const requestBody =  errorHandledRequest(fromDate,toDate);
+        const serviceResponse= await request.post(searchUrl,requestBody.requestBody);
+        let responseData= serviceResponse.aggregations[0].buckets;
+        let errorHandledStats= errorHandledResponse;
+        for(let i = 0; i<responseData.length; i++){
+        errorHandledStats[responseData[i].key_as_string]= responseData[i].doc_count
+        }
+        res.send(errorHandledStats);
+      break;
+
+      case '/unhandled-error':
+        toDate = new Date();
+        fromDate = new Date();
+        fromDate.setHours(0,0,0);
+        const requestbody =  unhandledErrorRequest(fromDate,toDate);
+        const serviceresponse= await request.post(searchUrl,requestbody.requestBody);
+        let Responsedata= serviceresponse.aggregations[0].buckets;
+        let unhandledErrorStats= unhandledErrorResponse;
+        for(let i = 0; i<Responsedata.length; i++){
+          unhandledErrorStats[Responsedata[i].key_as_string]= Responsedata[i].doc_count
+        }
+        res.send(unhandledErrorStats);
+      break;
+
+
 
     
 
