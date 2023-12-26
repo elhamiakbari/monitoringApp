@@ -106,7 +106,6 @@ exports.charispayController = async (req, res) => {
       case '/error-handled':
         var toDate = now.format('YYYY-M-DTHH:mm:ss');
         fromDate = now.format('YYYY-M-DT00:00:00');
-        console.log(fromDate,toDate)
         const requestBody =  errorHandledRequest(fromDate,toDate);
         const serviceResponse= await request.post(searchUrl,requestBody.requestBody);
         let responseData= serviceResponse.aggregations[0].buckets;
@@ -118,9 +117,8 @@ exports.charispayController = async (req, res) => {
       break;
 
       case '/unhandled-error':
-        toDate = new Date();
-        fromDate = new Date();
-        fromDate.setHours(0,0,0);
+        var toDate = now.format('YYYY-M-DTHH:mm:ss');
+        fromDate = now.format('YYYY-M-DT00:00:00');
         const requestbody =  unhandledErrorRequest(fromDate,toDate);
         const serviceresponse= await request.post(searchUrl,requestbody.requestBody);
         let Responsedata= serviceresponse.aggregations[0].buckets;

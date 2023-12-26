@@ -8,8 +8,8 @@ module.exports = (fromDate,toDate)=>{
             "fixed_interval": "30m",
             "time_zone": "Asia/Tehran",
             "extended_bounds": {
-              "min": 1703449800000,
-              "max": 1703536199999
+              "min": 1703536200000,
+              "max": 1703622599999
             }
           }
         }
@@ -92,10 +92,8 @@ module.exports = (fromDate,toDate)=>{
                     "bool": {
                       "should": [
                         {
-                          "term": {
-                            "level.keyword": {
-                              "value": "Error"
-                            }
+                          "match_phrase": {
+                            "level": "Error"
                           }
                         }
                       ],
@@ -108,10 +106,8 @@ module.exports = (fromDate,toDate)=>{
                         "bool": {
                           "should": [
                             {
-                              "term": {
-                                "ExceptionDetail.Type.keyword": {
-                                  "value": "Abp.UI.UserFriendlyException"
-                                }
+                              "match_phrase": {
+                                "ExceptionDetail.Type": "Abp.UI.UserFriendlyException"
                               }
                             }
                           ],
@@ -127,8 +123,8 @@ module.exports = (fromDate,toDate)=>{
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-12-24T20:30:00.000Z",
-                  "lte": "2023-12-25T20:29:59.999Z"
+                  "gte": fromDate,
+                  "lte": toDate
                 }
               }
             }
