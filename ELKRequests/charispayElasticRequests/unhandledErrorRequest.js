@@ -127,8 +127,8 @@ module.exports = (fromDate,toDate)=>{
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-12-24T20:30:00.000Z",
-                  "lte": "2023-12-25T20:29:59.999Z"
+                  "gte": fromDate.toISOString(),
+                    "lte": toDate.toISOString()
                 }
               }
             }
