@@ -6,8 +6,7 @@ const SqlService= require("../service/SqlService");
 const connectionErrorsRequest = require("../ELKRequests/charispayElasticRequests/connectionErrorsRequest");
 const errorHandledRequest = require("../ELKRequests/charispayElasticRequests/errorHandledRequest");
 const unhandledErrorRequest = require("../ELKRequests/charispayElasticRequests/unhandledErrorRequest");
-
-
+const jalali = require('jalali-moment')
 const connectionErrorsResponse = require('../response/charispay/connectionErrorResponse');
 
 const companyTransactionQuery =require("../SqlQueries/charispayQueries/companiesTransactionsQuery")
@@ -20,6 +19,7 @@ const transactionsStatus = require("../SqlQueries/charispayQueries/transactionsS
 const errorsInSendToBank = require("../SqlQueries/charispayQueries/errorsInSendToBank");
 const companiesCheques = require("../SqlQueries/charispayQueries/companiesCheques");
 
+let now = jalali().locale('en');
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
     var fromDate = new Date().toISOString();
@@ -105,10 +105,8 @@ exports.charispayController = async (req, res) => {
 
       case '/error-handled':
         toDate = new Date();
-        console.log(toDate);
         fromDate = new Date();
         fromDate.setHours(0,0,0);
-        console.log(fromDate);
         const requestBody =  errorHandledRequest(fromDate,toDate);
         const serviceResponse= await request.post(searchUrl,requestBody.requestBody);
         let responseData= serviceResponse.aggregations[0].buckets;
@@ -120,9 +118,8 @@ exports.charispayController = async (req, res) => {
       break;
 
       case '/unhandled-error':
-        toDate = new Date();
-        fromDate = new Date();
-        fromDate.setHours(0,0,0);
+        var toDate = now.format('YYYY-M-DTHH:mm:ss');
+        fromDate = now.format('YYYY-M-DT00:00:00');
         const requestbody =  unhandledErrorRequest(fromDate,toDate);
         const serviceresponse= await request.post(searchUrl,requestbody.requestBody);
         let Responsedata= serviceresponse.aggregations[0].buckets;
@@ -152,3 +149,8 @@ exports.charispayController = async (req, res) => {
       break;
     }
   };
+
+  Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
+  }
