@@ -4,8 +4,9 @@ const charispayRouter = require('./routes/charispay.js');
 const neobankRouter = require('./routes/neobank.js');
 const discrepancyRouter = require('./routes/discrepancy.js');
 const winston = require('winston');
-const port= 3000;
+const port = process.env.PORT || 3000;
 const app = express();
+
 
 const logger = winston.createLogger({
   transports: [
