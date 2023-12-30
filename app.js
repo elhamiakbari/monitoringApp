@@ -3,12 +3,27 @@ const indexRouter = require('./routes/index.js');
 const charispayRouter = require('./routes/charispay.js');
 const neobankRouter = require('./routes/neobank.js');
 const discrepancyRouter = require('./routes/discrepancy.js');
+const winston = require('winston');
 const port= 3000;
 const app = express();
 
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' })
+  ],
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  )
+});
 
 function errorHandler(err, req, res, next) {
-    res.status(500);
+  logger.error(err);
+    res.status(500).send({
+      error: {
+        message: err.message,
+        stack: err.stack
+      }});
   
     console.log(err)
   
