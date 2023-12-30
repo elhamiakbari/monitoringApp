@@ -125,6 +125,7 @@ module.exports = (fromDate,toDate)=>{
                   "format": "strict_date_optional_time",
                   "gte": fromDate,
                   "lte": toDate
+
                 }
               }
             }

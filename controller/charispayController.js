@@ -22,8 +22,8 @@ const companiesCheques = require("../SqlQueries/charispayQueries/companiesCheque
 let now = jalali().locale('en');
 exports.charispayController = async (req, res) => {
     const route = req.route.path;
-    var fromDate = new Date();
-    var toDate = new Date();
+    var fromDate = new Date().toISOString();
+    var toDate = new Date().toISOString();
     const searchUrl= config.elastic_base_url +config.elastic_index_name.charispay + "/_search?sort=@timestamp:desc&_source_includes=@timestamp,_id,level,HttpData";
     switch (route) { 
       case '/companies-daily-transactions':
@@ -104,8 +104,9 @@ exports.charispayController = async (req, res) => {
       break;
 
       case '/error-handled':
-        var toDate = now.format('YYYY-M-DTHH:mm:ss');
-        fromDate = now.format('YYYY-M-DT00:00:00');
+        toDate = new Date();
+        fromDate = new Date();
+        fromDate.setHours(0,0,0);
         const requestBody =  errorHandledRequest(fromDate,toDate);
         const serviceResponse= await request.post(searchUrl,requestBody.requestBody);
         let responseData= serviceResponse.aggregations[0].buckets;
